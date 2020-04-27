@@ -169,16 +169,9 @@
                             <?php foreach($output['brand'] as $vv){?>
                                 <span><?php echo $vv['fullName']?></span>
                             <?php }?>
-<!--                            <p class="sck_to_loading">点击加载更多...</p>-->
                         </div>
                         <input type="hidden" name="<?php echo $v['attrMetas']['isSkuCandidate']?'skuAttributes'.'['.$key.']'.'['."attrKey".']':'otherAttributes'.'['.$key.']'.'['."attrKey".']' ?>" value="<?php echo $v['attrName'];?>"/>
                         <input type="hidden" name="<?php echo $v['attrMetas']['isSkuCandidate']?'skuAttributes'.'['.$key.']'.'['."propertyId".']':'otherAttributes'.'['.$key.']'.'['."propertyId".']'; ?>" value="<?php echo $v['propertyId'];?>"/>
-
-<!--                        <tr>-->
-<!--                            <td colspan="20">-->
-<!--                                <div class="pagination"> --><?php //echo $output['brand_page'] ?><!-- </div>-->
-<!--                            </td>-->
-<!--                        </tr>-->
                     <?php }?>
                 <?php }?>
             </ul>

@@ -197,8 +197,8 @@ class zcy_goodsControl extends BaseSellerControl
         require_once(BASE_PATH . '/../zcy/nr_zcy.php');
         $zcy = new nr_zcy();
         $attr = $zcy->get_category_attrs($_POST['three']);
-//        echo '<pre>';
-//        print_r($attr);die;
+        echo '<pre>';
+        print_r($attr);die;
         $model = Model();
         $img = $model->table("zcy_img")->order("id desc")->page(20)->select();
         $brand = $model->table('zcy_brand')->page(100)->select();
@@ -212,52 +212,56 @@ class zcy_goodsControl extends BaseSellerControl
     }
     public function zcy_goods3Op(){
         $model = Model();
-        $_POST['layer'] = 11;
+        sort($_POST['otherAttributes']);
+        if(!empty($_POST['skuAttributes'])){
+            sort($_POST['skuAttributes']);
+            $attrs = [$_POST['skuAttributes'][0]['attrKey']=>$_POST['skuAttributes'][0]['attrVal']];
+            unset($_POST['skuAttributes'][0]['propertyId']);
+        }else{
+            $_POST['skuAttributes']=[];
+            $attrs = [];
+        }
+        $_POST['goods_id']= 54;
+        $data['layer'] = 11;
         $goods = $model->table('goods')->where(["goods_id"=>$_POST['goods_id']])->field("goods_name,goods_price,goods_marketprice,goods_storage")->find();
-        $_POST['skus'] =[
+//        echo $_POST['goods_id'];die;
+        $data['skus'][] =[
             'price'=>$goods['goods_price']*100,
-            'attrs'=>[''],
+            'attrs'=>$attrs,
             'platformPrice'=>$goods['goods_marketprice']*100,
             'quantity'=>$goods['goods_storage'],
             'skuCode'=>$_POST['goods_id']
         ];
-        $_POST['item'] = [
+        $data['item'] = [
             'limit'=>0,
             'selfPlatformLink'=>$_POST['goodsurl'],
             'itemCode'=>$_POST['goods_id'],
             'mainImage'=>$_POST['image_path'],
-            'countryId'=>  $_POST['provinceId'],
+            'provinceId'=>  $_POST['provinceId'],
             'cityId'=>$_POST['cityId'],
             'regionId'=>$_POST['regionId'],
             'name'=>$goods['goods_name'],
             'categoryId'=>$_POST['categoryId'],
         ];
-        $_POST['itemDetail'] = [
+        $data['itemDetail'] = [
             'detail'=>$_POST['goods_body'],
-            'images'=>implode(",",$_POST['images']),
+            'images'=>$_POST['images'],
         ];
-        unset($_POST['goods_id']);
-        unset($_POST['image_path']);
-        unset($_POST['provinceId']);
-        unset($_POST['cityId']);
-        unset($_POST['regionId']);
-        unset($_POST['categoryId']);
-        unset($_POST['goods_body']);
-        unset($_POST['goods_image']);
-        unset($_POST['images']);
-        unset($_POST['goodsurl']);
-        foreach($_POST['otherAttributes'] as $k =>$v){
+        $data['otherAttributes'] = $_POST['otherAttributes'];
+        $data['skuAttributes'] = $_POST['skuAttributes'];
+        echo '<pre>';
+        $data = json_encode($data);
+        var_dump($data);die;
+        foreach($data['otherAttributes'] as $k =>$v){
 
-            if(empty($_POST['otherAttributes'][$k]['attrVal'])){
-                $_POST['otherAttributes'][$k]['attrVal'] = "无";
+            if(empty($data['otherAttributes'][$k]['attrVal'])){
+                $data['otherAttributes'][$k]['attrVal'] = "无";
             }
         }
-        echo '<pre>';
-//        $data = json_encode($_POST);
-        print_r($_POST);die;
         require_once(BASE_PATH . '/../zcy/nr_zcy.php');
         $zcy = new nr_zcy();
-        $rs = $zcy->create_goods($_POST);
+        unset($_POST);
+        $rs = $zcy->create_goods($data);
         print_r($rs);
     }
     public function zcy_goodsdataOp(){
