@@ -92,7 +92,7 @@
     .sck_brand{
         width: 100%;
         height: 250px;
-        border: 1px solid red;
+        /*border: 1px solid lightgray;*/
         overflow: auto;
     }
     .sck_brand span{
@@ -102,7 +102,7 @@
         line-height: 30px;
         display: block;
         font-size: 15px;
-        border: 1px solid green;
+        border: 1px solid lightgray;
     }
     .sck_brand span:active{
         font-weight: bold;

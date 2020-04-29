@@ -76,9 +76,15 @@ class zcy_goodsControl extends BaseSellerControl
             case 'zcy_addgoods':// 主动映射的商品改价
                 $model = Model();
                 $spu = $model->table("zcy_category")->where(['pid'=>0])->limit(false)->select();
-                $goods = $model->table('goods')->where(['store_id'=>$_SESSION["store_id"]])->page(20)->order('goods_id desc')->select();
-//                echo '<pre>';
-//                print_r($spu);die;
+                $goods = $model->table('goods')
+//                    ->field('goods *,zcy_category.id')
+//                    ->join('left')
+//                    ->on('goods.zcy_category = zcy_category.id')
+                    ->where(['store_id'=>$_SESSION["store_id"],'is_cloud'=>0])
+                    ->page(20)
+                    ->order('goods_id desc')
+                    ->select();
+                $category = $model->table('zcy_category')->where(['id'=>$goods['zcy_category']]);
                 Tpl::output("goods_class", $spu);
                 Tpl::output("rs_array", $goods);
                 Tpl::output("page", $model->showpage(2));
@@ -255,7 +261,7 @@ class zcy_goodsControl extends BaseSellerControl
 
         }
         sort($data['otherAttributes']);
-//        echo '<pre>';
+        echo '<pre>';
 //        $data = json_encode($data,JSON_UNESCAPED_UNICODE);
 //        var_dump($data);die;
 
@@ -264,6 +270,17 @@ class zcy_goodsControl extends BaseSellerControl
         unset($_POST);
         $rs = $zcy->create_goods($data);
         print_r($rs);
+        if($rs['success'] == 1){
+            $res['code'] = $model->table('goods')->where(['goods_id'=>$rs['data_response']['itemCode']])->update(['is_cloud'=>1,'zcy_category'=>$data['item']['categoryId'],]);
+            $res['msg'] = "添加成功";
+        }else{
+//            echo '<pre>';
+//                var_dump($rs['data_response']);die;
+            $res['code'] = 0;
+            $res['msg'] = $rs['error_response']['resultMsg'];
+        }
+        die(json_encode($res,JSON_UNESCAPED_UNICODE));
+        Tpl::showpage('zcy_goods3');
     }
     public function zcy_goodsdataOp(){
         $model = Model();
