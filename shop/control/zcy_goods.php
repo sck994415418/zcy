@@ -261,7 +261,7 @@ class zcy_goodsControl extends BaseSellerControl
 
         }
         sort($data['otherAttributes']);
-        echo '<pre>';
+//        echo '<pre>';
 //        $data = json_encode($data,JSON_UNESCAPED_UNICODE);
 //        var_dump($data);die;
 
@@ -269,17 +269,15 @@ class zcy_goodsControl extends BaseSellerControl
         $zcy = new nr_zcy();
         unset($_POST);
         $rs = $zcy->create_goods($data);
-        print_r($rs);
         if($rs['success'] == 1){
             $res['code'] = $model->table('goods')->where(['goods_id'=>$rs['data_response']['itemCode']])->update(['is_cloud'=>1,'zcy_category'=>$data['item']['categoryId'],]);
             $res['msg'] = "添加成功";
         }else{
-//            echo '<pre>';
-//                var_dump($rs['data_response']);die;
             $res['code'] = 0;
             $res['msg'] = $rs['error_response']['resultMsg'];
         }
-        die(json_encode($res,JSON_UNESCAPED_UNICODE));
+        Tpl::output("code", $res['code']);
+        Tpl::output("msg", $res['msg']);
         Tpl::showpage('zcy_goods3');
     }
     public function zcy_goodsdataOp(){
