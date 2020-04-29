@@ -1,4 +1,5 @@
 <?php defined('InShopNC') or exit('Access Invalid!');?>
+<meta name="referrer" content="no-referrer">
 <div class="tabmenu">
   <?php include template('layout/submenu');?>
   <a href="<?php echo urlShop('store_goods_add');?>" class="ncsc-btn ncsc-btn-green" title="<?php echo $lang['store_goods_index_add_goods'];?>"> <?php echo $lang['store_goods_index_add_goods'];?></a>

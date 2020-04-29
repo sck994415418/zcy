@@ -197,8 +197,8 @@ class zcy_goodsControl extends BaseSellerControl
         require_once(BASE_PATH . '/../zcy/nr_zcy.php');
         $zcy = new nr_zcy();
         $attr = $zcy->get_category_attrs($_POST['three']);
-        echo '<pre>';
-        print_r($attr);die;
+//        echo '<pre>';
+//        print_r($attr);die;
         $model = Model();
         $img = $model->table("zcy_img")->order("id desc")->page(20)->select();
         $brand = $model->table('zcy_brand')->page(100)->select();
@@ -218,13 +218,11 @@ class zcy_goodsControl extends BaseSellerControl
             $attrs = [$_POST['skuAttributes'][0]['attrKey']=>$_POST['skuAttributes'][0]['attrVal']];
             unset($_POST['skuAttributes'][0]['propertyId']);
         }else{
-            $_POST['skuAttributes']=[];
-            $attrs = [];
+            $_POST['skuAttributes']= array();
+            $attrs = (object)array();
         }
-        $_POST['goods_id']= 54;
         $data['layer'] = 11;
         $goods = $model->table('goods')->where(["goods_id"=>$_POST['goods_id']])->field("goods_name,goods_price,goods_marketprice,goods_storage")->find();
-//        echo $_POST['goods_id'];die;
         $data['skus'][] =[
             'price'=>$goods['goods_price']*100,
             'attrs'=>$attrs,
@@ -249,15 +247,18 @@ class zcy_goodsControl extends BaseSellerControl
         ];
         $data['otherAttributes'] = $_POST['otherAttributes'];
         $data['skuAttributes'] = $_POST['skuAttributes'];
-        echo '<pre>';
-        $data = json_encode($data);
-        var_dump($data);die;
         foreach($data['otherAttributes'] as $k =>$v){
 
             if(empty($data['otherAttributes'][$k]['attrVal'])){
-                $data['otherAttributes'][$k]['attrVal'] = "无";
+                unset($data['otherAttributes'][$k]);
             }
+
         }
+        sort($data['otherAttributes']);
+//        echo '<pre>';
+//        $data = json_encode($data,JSON_UNESCAPED_UNICODE);
+//        var_dump($data);die;
+
         require_once(BASE_PATH . '/../zcy/nr_zcy.php');
         $zcy = new nr_zcy();
         unset($_POST);
